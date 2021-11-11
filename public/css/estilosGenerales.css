@@ -1,0 +1,183 @@
+.botonVolver {
+    background-color: green !important;
+    text-align: center !important;
+    color: white !important;
+}
+
+.botonVolver:hover {
+    background-color: #35682D !important;
+    text-align: center !important;
+    color: white !important;
+}
+
+.cajaBotonVolver {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    text-align: center;
+    background-color: green !important;
+    color: white;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.alert-danger {
+    text-align: center;
+    background-color: red !important;
+    color: white;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.alert-info {
+    text-align: center;
+    background-color: gray !important;
+    color: black;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.card {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.botoneraLibrerias {
+    background-color: #041E42 !important;
+    color: white;
+}
+
+.btn:focus, .btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.botonesCreacion {
+    background-color: green !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesCreacion:hover {
+    background-color: #35682D !important;
+    color: white !important;
+}
+
+.botonesCreacion:active {
+    background-color: green !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.botonesEliminacion {
+    background-color: red !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesEliminacion:hover {
+    background-color: #CC0000 !important;
+    color: white !important;
+}
+
+.botonesAccion {
+    border-radius: 0 !important;
+}
+
+.centradoTexto {
+    text-align: center;
+}
+.paddingTitulos {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.botonesGestionPermisos {
+    background-color: gray !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesGestionPermisos:hover {
+    background-color: rgb(75, 72, 72) !important;
+    color: white !important;
+}
+
+.botonesGestionPermisos:active {
+    background-color: gray !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.botonesCarga {
+    background-color: #041E42 !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesCarga:hover {
+    background-color: #041E42 !important;
+    color: white !important;
+}
+
+.botonesCarga:active {
+    background-color: #041E42 !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.botonesDescarga {
+    background-color: #20ca09 !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesDescarga:hover {
+    background-color: #20ca09 !important;
+    color: white !important;
+}
+
+.botonesDescarga:active {
+    background-color: #20ca09 !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.botonesPrevisualizador {
+    background-color: rgb(9, 31, 238) !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesPrevisualizador:hover {
+    background-color: rgb(9, 31, 238) !important;
+    color: white !important;
+}
+
+.botonesPrevisualizador:active {
+    background-color: rgb(9, 31, 238) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.botonesBusqueda {
+    background-color: #000000 !important;
+    color: white !important;
+    border-radius: 0 !important;
+}
+
+.botonesBusqueda:hover {
+    background-color: #000000  !important;
+    color: white !important;
+}
+
+.botonesBusqueda:active {
+    background-color: #000000  !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+
+

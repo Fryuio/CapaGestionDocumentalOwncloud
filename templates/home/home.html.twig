@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('nombreUsuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bienvenidaUsuario">
+                    ¡Bienvenido de nuevo,  {{app.session.get('nombreUsuario')}} !
+                    <p>Tu último acceso fue el {{app.session.get('fechaUltimoAcceso')}}</p>
+                </div>
+                <div class="row centradoTextoHome">
+                    <div class="col-md-6">
+                        <h3>Inicio</h3>
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#"><i class="fas fa-user"></i> Mi perfil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ path('cerrarSesion') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('misDocumentos') }}"><i class="fas fa-file"></i> Mis documentos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="fas fa-users"></i> Mis grupos</a>
+                            </li>
+                            <li class="nav-item espaciadoAlmacenamiento">
+                                <a><i class="fas fa-database"></i> Mi capacidad</a>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="{{total|number_format(0)}}"></div>
+                                </div>
+                                <p>{{usado|number_format(2)}} GB usados de {{total|number_format(0)}} GB disponibles</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Últimas novedades</h3>
+                        {# Tabla con últimas subidas a owncloud, y compartidos con el propio usuario, etc #}
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script>
+        $(document).ready(function() {
+            var valorPocoAlmacenamiento = 7;
+            var valorMedioAlmacenamiento = 9;
+            var barraAlmacenamiento = $(".progress-bar");
+            var rellenoEnPorcentaje = ({{usado|number_format(2)}} / {{total|number_format(2)}})*100;
+            barraAlmacenamiento.css("width",rellenoEnPorcentaje+"%").attr("aria-valuenow",{{usado|number_format(2)}});
+            var valorAlmacenamiento = barraAlmacenamiento.attr("aria-valuenow");
+            if(valorAlmacenamiento <= valorPocoAlmacenamiento){
+                barraAlmacenamiento.addClass("bg-success");
+            }else if(valorAlmacenamiento > valorPocoAlmacenamiento && valorAlmacenamiento < valorMedioAlmacenamiento){
+                barraAlmacenamiento.addClass("bg-warning");
+                //Poner un globito o algo indicando que queda poco almacenamiento disponible
+            }else if(valorAlmacenamiento >= valorMedioAlmacenamiento){
+                barraAlmacenamiento.addClass("bg-danger");
+                //Poner un globito que estás al límite del almacenamiento disponible
+            } 
+        });
+
+    </script>
+
+{% endblock %}
+

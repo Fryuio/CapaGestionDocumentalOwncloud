@@ -1,0 +1,11 @@
+.botonVersionado {
+    background-color: gray !important;
+    text-align: center !important;
+    color: white !important;
+}
+
+.botonVersionado:hover {
+    background-color: gray !important;
+    text-align: center !important;
+    color: white !important;
+}

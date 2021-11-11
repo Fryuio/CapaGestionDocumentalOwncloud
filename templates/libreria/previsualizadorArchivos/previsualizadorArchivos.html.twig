@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="row cajaBotonVolver justify-content-center">
+        <a class="botonVolver btn" href="{{ path('libreria', {"idLibreria" : idLibreria}) }}"><i class="fas fa-arrow-left"></i> Volver a la librería</a>
+    </div>
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col col-md-12 centradoTexto">
+                <div id="informacionCarpeta">
+                        <h2 class="paddingTitulos">Archivo: {{metadatos.0.document.name}} 
+                        <a class="botonVersionado btn" href="{{ path('versionadoArchivos', {"idLibreria": idLibreria, "idDocumento" : idDocumento}) }}"><i class="fas fa-arrow-right"></i> Ver versiones</a>
+                        </h2>
+                        <h3 class="paddingTitulos">Información adicional del archivo</h3>
+                        {% for metadato in metadatos %}
+                            {% if metadato.clave == "fechaCreacion" %}
+                                <p>Fecha de creación: {{metadato.valor|date("H:i:s d/m/Y")}}</p>
+                            {% elseif metadato.clave == "peso" %}
+                                <p>{{metadato.clave}} : {{metadato.valor}} bytes</p>
+                            {% endif %}
+                        {% endfor %}
+                        {% if metadatos == null %}
+                            <p>Sin datos que mostrar</p>
+                        {% endif %}
+                </div>
+
+            </div>
+            {% if extensionDocumento != "pdf" %}
+            <div class="col col-md-12 centradoTexto">
+                <h2 class="paddingTitulos">Contenido</h2>
+                <div class="previsualizador">
+                        {{textoFichero}}
+                </div >
+            </div>
+            {% else %}
+                {# Previsualizador para PDF #}
+                <div class="previsualizador">
+                    {{respuesta}}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+     
+        });
+    </script>
+
+{% endblock %}

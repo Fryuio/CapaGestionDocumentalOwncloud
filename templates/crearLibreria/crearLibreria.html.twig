@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {{parent()}}
+    <div class="row justify-content-center">
+        <div id="cajaCrearLibrerias">
+            <h1>Crear nueva librería</h1>
+            <div class="row cajaBotonVolver justify-content-center">
+                <a class="botonVolver btn" href="{{ path('principal') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+            </div>
+            {{form_start(formulario)}}
+                <div class="row justify-content-center">
+                    <div class="col-md-12" id="cajaNombreLibreria">
+                        {{ form_row(formulario.name) }}
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-12" id="cajaLoginSubmit">
+                        {{ form_row(formulario.crear) }}
+                    </div>
+                </div>
+            {{form_end(formulario)}} 
+        </div>
+    </div>
+{% endblock %}

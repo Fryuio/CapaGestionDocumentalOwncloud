@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="row cajaBotonVolver justify-content-center">
+        <a class="botonVolver btn" href="{{ path('libreria', {"idLibreria" : idLibreria}) }}"><i class="fas fa-arrow-left"></i> Volver a la librería</a>
+    </div>
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col col-md-6">
+                <h2 id="tituloDocumento">Documento: {{primeraVersion.name}} <i class="fas fa-file"></i></h2>
+                <table class="table table-hover table-dark" id="tablaDocumentosCarpeta">
+                    <thead>
+                        <th colspan="1" id="tituloTablaVersionDocumento">Versión del documento</th>
+                        <th colspan="1" id="tituloTablaFechaCreacionDocumento">Fecha de creación</th>
+                        <th colspan="1" id="tituloTablaUsuarioDocumento">Usuario propietario</th>
+                        <th colspan="1" id="tituloTablaCapacidadArchivo">Tamaño del archivo</th>
+                        <th colspan="1" id="tituloTablaBotonDescargaArchivo">Descarga del archivo</th>
+                    </thead>
+                    <tbody>
+                    {% set contadorVersiones = 1 %}
+                    {% for archivo in listaVersiones %}
+                        <tr> 
+                            <td>{{contadorVersiones}}</td>
+                            <td>
+                             {% for metadato in metadatos %}
+                                {% for m in metadato %} 
+                                    {% if m.clave == "fechaCreacion" and m.document == archivo %}
+                                            {{ m.valor|date("H:i:s d/m/Y") }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            </td>
+                            <td>{{archivo.libraryNode.documentLibrary.libraryOwners.users.nombre}}</td>
+                            <td>
+                            {% for metadato in metadatos %}
+                                {% for m in metadato %} 
+                                    {% if m.clave == "peso" and m.document == archivo %}
+                                            {{ m.valor }} bytes
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            </td>
+                            <td><a id="descargarArchivo" href="{{ path("descargarArchivo", {"idDocumento" : archivo.id}) }}" class="btn botonesDescarga shadow-none" data-toggle="tooltip" data-placement="top" title="Descargar archivo"><i class="fas fa-download"></i></a></td>
+                        </tr>
+                        {% set contadorVersiones = contadorVersiones + 1 %}
+                    {% endfor %}          
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            
+
+            
+            
+        });
+    </script>
+
+{% endblock %}

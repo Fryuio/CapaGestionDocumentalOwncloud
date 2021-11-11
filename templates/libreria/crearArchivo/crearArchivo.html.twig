@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% set usuario = app.session.get('usuario') %}
+        <div class="row justify-content-center">
+            <div id="cajaCrearCarpetas">
+            <h1>Crear nuevo archivo</h1>
+                <div class="row cajaBotonVolver justify-content-center">
+                    <a class="botonVolver btn" href="{{ path('libreria', {'idLibreria' : libreria}) }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4">
+                        STORAGE 
+                    </div>
+                    <div class="col col-md-8">
+                        {# Select con los storages disponibles del usuario #}
+                        <select id="inputStorage" class="form-control">
+                            <option value="eligeUno" selected>Elige uno</option>
+                            {% for storage in storages %}
+                                {% set metadatos = storage.metadata|json_decode %}
+                                {% set nombreStorage = metadatos.nombreStorage %}
+                                <option value="{{nombreStorage}}">{{nombreStorage}}</option>
+                                {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4">
+                        NOMBRE DEL ARCHIVO
+                    </div>
+                    <div class="col col-md-8">
+                        {# Input nombre de usuario #}
+                        <input type="text" class="form-control" id="inputNombreArchivo" placeholder="Nombre del archivo...">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-12">
+                        <button id="botonSubmitNuevoArchivo" class="btn botonesCreacion btn-primary">Crear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script>
+        $(document).ready(function(){
+            var nombreArchivo;
+            var idDirectorio;
+            var storageSeleccionado;
+            var noError = true;
+            $("#botonSubmitNuevoArchivo").click(function(event) {
+                event.preventDefault();
+                noError=true;
+                var url = '{{ path("crearArchivo", {"idDirectorio" : "idDirectorio"}) }}';
+                var urlPrincipal = '{{ path("principal") }}'
+                nombreArchivo = $("#inputNombreArchivo").val();
+                storageSeleccionado = $("#inputStorage").val();
+                idDirectorio = {{idDirectorio}};
+                if(nombreArchivo==null){
+                    noError=false;
+                }
+                if(noError==true){
+                    url = url.replace("idDirectorio", idDirectorio);
+                    $.ajax({
+                        url : url,
+                        data : {
+                            'nombreArchivo' : nombreArchivo,
+                            'storageSeleccionado' : storageSeleccionado
+                        },
+                        type : 'POST',
+                        success : function() {
+                            window.location = urlPrincipal; 
+                        },
+                        error : function() {}
+                    });
+                }
+            });
+        });
+
+    </script>
+
+{% endblock %}

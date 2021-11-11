@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid">
+        {% for mensaje in app.flashes('archivoEliminado') %}
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="alert alert-success fade show " role="alert">
+                         {{ mensaje }} <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% for mensaje in app.flashes('libreriaCreada') %}
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="alert alert-success fade show " role="alert">
+                         {{ mensaje }} <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% for mensaje in app.flashes('archivoCargado') %}
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="alert alert-success fade show " role="alert">
+                         {{ mensaje }} <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% for mensaje in app.flashes('libreriaBorrada') %}
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="alert alert-info fade show " role="alert">
+                         {{ mensaje }} <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% for mensaje in app.flashes('storageCreado') %}
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="alert alert-success fade show " role="alert">
+                         {{ mensaje }} <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% for mensaje in app.flashes('informacion') %}
+            <div class="row justify-content-center">
+                <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+                    <div class="card-header">
+                        <i class="fas fa-question-circle"></i> Información
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Información de uso</h5>
+                        <p class="card-text">{{mensaje}}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="row justify-content-center">
+            <div class="col-md-12" id="gestionLibrerias">
+                <ul class="pagination justify-content-center">
+                    <li><a id="crearLibreria" href="{{ path('crearLibreria') }}" class="btn page-link botonesCreacion shadow-none"><i class="fas fa-plus"></i> Crear librería</a></li>
+                    {% for libreria in libreriasUsuario %}
+                    <li><a id="borrar{{libreria.id}}" href="{{ path('borrarLibreria', {'idLibreria' : libreria.id}) }}" class="btn page-link botonesEliminacion"><i class="fas fa-minus"></i> Borrar librería</a><li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="bordeTablaLibreriasUsuario">
+                <table class="table table-hover table-dark" id="tablaLibreriasUsuario">
+                    <thead>
+                        <th colspan="1" id="tituloTablaLibreriasUsuario">Listado librerías del usuario {{ usuario.nombre }}</th>
+                    </thead>
+                    <tbody>
+                    {% for libreria in libreriasUsuario %}
+                        <tr>
+                        <td id="{{libreria.id}}">{{libreria.name}} <a href="{{ path('libreria', {'idLibreria' : libreria.id}) }}" class="btn btn-dark">Ir a la librería</a></td>
+                        </tr>
+                    {% endfor %}                  
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            $('.alert').alert();
+            $('.botonesEliminacion').hide();
+            var idLibreria=null;
+            $('#tablaLibreriasUsuario').on('click', 'tbody tr', function(event) {
+                $(this).addClass('seleccionada').siblings().removeClass('seleccionada');
+            });
+
+            $('#tablaLibreriasUsuario').on('click', 'tbody tr td', function(event) {
+                if(idLibreria!=null){
+                    $('#borrar'+idLibreria).hide();
+                }
+                idLibreria = $(this).attr('id');
+                $('#borrar'+idLibreria).show();
+                if($('a').is(":focus")){
+                    $('#borrar'+idLibreria).hide();
+                }
+                
+            });
+            $(document).click(function(event) {
+                var $target = $(event.target);
+                if(!$target.closest('td').length) {
+                    $('#tablaLibreriasUsuario tbody tr').removeClass('seleccionada');
+                    $('#borrar'+idLibreria).hide();
+                    idLibreria=null;
+                }        
+            });
+            setTimeout(function() {
+                $(".alert").alert('close');
+            },5000);
+            
+        });
+    </script>
+
+{% endblock %}
+

@@ -1,0 +1,7 @@
+#errorNoLogeado > p {
+    color:red;
+    font-size: 20px;
+}
+#errorNoLogeado {
+    text-align: center;
+}

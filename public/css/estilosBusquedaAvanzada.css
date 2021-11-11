@@ -1,0 +1,10 @@
+.cajaBusquedaAvanzada{
+    border: 2px solid black;
+    padding: 15px;
+}
+
+#tablaResultadoBusqueda{
+    display: inline-block;
+    max-height: 300px !important;
+    overflow: auto;
+}

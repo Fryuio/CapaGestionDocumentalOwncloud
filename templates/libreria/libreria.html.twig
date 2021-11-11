@@ -1,0 +1,249 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+
+    {% block stylesheets %}
+    {{parent()}} 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid">
+        <div class="row cajaBotonVolver justify-content-center">
+                <a class="botonVolver btn" href="{{ path('principal') }}"><i class="fas fa-arrow-left"></i> Volver al listado de librerías</a>
+        </div>
+        <div class="row justify-content-center cajaPrincipal">
+            <div class="row">
+                <div class="col-sm-9 cajaArbol">
+                    <table class="table table-hover" id="tablaCarpetasUsuario">
+                        <thead>
+                            <th colspan="1" id="tituloTablaCarpetasUsuario">
+                                <ul class="pagination justify-content-center">
+                                    <li><a href="{{path('crearCarpetaLibreria', { 'idLibreria' : libreria  })}}" class="btn botonesCreacion shadow-none" data-toggle="tooltip" data-placement="top" title="Crear carpeta"><i class="fas fa-folder"></i></a></li>
+                                    <li><a href="{{path('permisosObjetosLibreria', { 'idLibreria' : libreria  })}}" class="btn botonesGestionPermisos shadow-none" data-toggle="tooltip" data-placement="top" title="Permisos de la librería"><i class="fas fa-user-shield"></i></a></li>     
+                                    <li><a id="nuevoStorage" href="{{ path('nuevoStorage', {'idLibreria' : libreria })}}" class="btn page-link botonesCreacion shadow-none" data-toggle="tooltip" data-placement="top" title="Nuevo storage"><i class="fas fa-database"></i></a></li>
+                                    <li><a id="busquedaAvanzada" href="{{ path("busquedaAvanzada", {"idLibreria" : libreria}) }}" class="btn page-link botonesBusqueda shadow-none" data-toggle="tooltip" data-placement="top" title="Búsqueda Avanzada"><i class="fas fa-search"></i></a></li>
+                                </ul>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div id="tree">
+                                                    
+                                    </div>
+                                </td>
+                            </tr>          
+                        </tbody>
+                    </table>
+                    <ul class="pagination justify-content-center opcionesCarpeta">
+                        <li>
+                            <a id="crearSubCarpeta" href="#" class="btn botonesCreacion shadow-none" data-toggle="tooltip" data-placement="top" title="Crear Subcarpeta"><i class="fas fa-plus"></i></a>
+                        </li>
+                        <li>
+                            <a id="eliminarCarpeta" href="#" class="btn botonesEliminacion shadow-none" data-toggle="tooltip" data-placement="top" title="Eliminar Carpeta"><i class="fas fa-minus"></i></a> 
+                        </li>
+                        <li>
+                            <a id="gestionPermisosCarpeta" href="#" class="btn botonesGestionPermisos shadow-none" data-toggle="tooltip" data-placement="top" title="Gestionar permisos de la carpeta"><i class="fas fa-user-shield"></i></a> 
+                        </li> 
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 cajaListado">
+                    {% if ficheros is defined and ficheros != null %}
+                        <table class="table table-hover table-dark" id="tablaDocumentosCarpeta">
+                            <thead>
+                                <th colspan="1" id="tituloTablaLibreriasUsuario">Documentos en la carpeta seleccionada</th>
+                            </thead>
+                            <tbody>
+                            {% for fichero in ficheros %}
+                                <tr>
+                                <td id="{{fichero.id}}" data-carpeta="{{fichero.libraryNode.id}}" style="display: none">{{fichero.name}}
+                                {% if fichero.lastVersion == true %} <span class='badge badge-dark' style='margin-left: 5px;'> Última versión </span> {% endif %}
+                                </td>
+                                </tr>
+                            {% endfor %}                  
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>Sin archivos</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-sm-12 cajaPanel">
+                    {% if storages != null %}
+                    <ul class="pagination justify-content-center">
+                        <li>
+                            <a id="eliminarArchivo" href="#" class="btn botonesEliminacion shadow-none" data-toggle="tooltip" data-placement="top" title="Eliminar archivo"><i class="fas fa-minus"></i></a> 
+                        </li>
+                        <li>
+                            <a id="cargarArchivo" href="#" class="btn botonesCarga shadow-none" data-toggle="tooltip" data-placement="top" title="Cargar archivo"><i class="fas fa-upload"></i></a> 
+                        </li>
+                        <li>
+                            <a id="descargarArchivo" href="#" class="btn botonesDescarga shadow-none" data-toggle="tooltip" data-placement="top" title="Descargar archivo"><i class="fas fa-download"></i></a> 
+                        </li> 
+                        <li>
+                            <a id="gestionPermisosArchivo" href="#" class="btn botonesGestionPermisos shadow-none" data-toggle="tooltip" data-placement="top" title="Gestionar permisos"><i class="fas fa-user-shield"></i></a> 
+                        </li>
+                        <li>
+                            <a id="previsualizadorArchivo" href="#" class="btn botonesPrevisualizador shadow-none" data-toggle="tooltip" data-placement="top" title="Previsualizar archivo"><i class="fas fa-eye"></i></a> 
+                        </li>
+                    </ul>
+                    {% endif %}
+                    {% for metadato in metadatos %}
+                        <li id="{{metadato.id}}" data-documento="{{metadato.document.name}}" style="display: none">
+                            {{metadato.clave}} : {{metadato.valor}}
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+        
+        </div> 
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}} 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{asset('../bower_components/jquery/dist/jquery.js')}}"></script>
+    <script src="{{asset('../bower_components/bootstrap-treeview/src/js/bootstrap-treeview.js')}}"></script>
+    <script>
+        $(document).ready(function(){
+            $("[data-carpeta]").hide();
+            $("#tablaDocumentosCarpeta").hide();
+            $("#eliminarArchivo").hide();
+            $("#cargarArchivo").hide();
+            $("#descargarArchivo").hide();
+            $("#gestionPermisosArchivo").hide();
+            $("#previsualizadorArchivo").hide();
+            var idDirectorioActual = null;
+            var jsonstr = '{{arbol|raw}}';
+            var arbol = JSON.parse(jsonstr);
+            var idDocumento = null;
+            var nombreDocumento = null;
+            var carpetaSeleccionada = false;
+            $("#tree").treeview({
+                data: JSON.stringify([arbol]),
+                levels: 2,
+                collapseIcon: "glyphicon glyphicon-minus",
+                expandIcon:  "glyphicon glyphicon-plus"
+
+            });
+            $('#tree').on('nodeSelected', function(event, data) {
+                event.preventDefault();
+                if(data.id!=-1){
+                    var urlCreacion = '{{ path("crearSubCarpetaLibreria", {"idDirectorio" : "idDirectorio"}) }}'; 
+                    urlCreacion = urlCreacion.replace("idDirectorio", data.id);
+
+                    var urlEliminacion = '{{ path("eliminarCarpetaLibreria", {"idDirectorio" : "idDirectorio"}) }}';
+                    urlEliminacion = urlEliminacion.replace("idDirectorio", data.id);
+
+                    var urlPermisosCarpeta = '{{ path("permisosCarpeta", {"idDirectorio" : "idDirectorio", "idLibreria" : "idLibreria"}) }}'; 
+                    urlPermisosCarpeta = urlPermisosCarpeta.replace("idDirectorio", data.id);
+                    urlPermisosCarpeta = urlPermisosCarpeta.replace("idLibreria", {{libreria}});
+
+                    var urlCargarArchivo = '{{ path("cargarArchivo", {"idDirectorio" : "idDirectorio", "idLibreria" : "idLibreria"}) }}'; 
+                    urlCargarArchivo = urlCargarArchivo.replace("idDirectorio", data.id);
+                    urlCargarArchivo = urlCargarArchivo.replace("idLibreria", {{libreria}});
+
+                    
+                    idDirectorioActual = data.id;
+                    
+                    $("#crearSubCarpeta").attr("href", urlCreacion);
+                    $("#eliminarCarpeta").attr("href", urlEliminacion);
+                    $("#cargarArchivo").attr("href", urlCargarArchivo);
+                    $("#gestionPermisosCarpeta").attr("href", urlPermisosCarpeta);
+                    $("#crearSubCarpeta").show();
+                    $("#eliminarCarpeta").show();
+                    $("#gestionPermisosCarpeta").show();
+                    {% if storages != null %}
+                        $("#cargarArchivo").show();
+                        carpetaSeleccionada = true;
+                    {% endif %}
+                    $("[data-carpeta="+data.id+"]").show();
+                    $("#tablaDocumentosCarpeta").show();
+                }
+                
+            });
+
+            $('#tree').on('nodeUnselected', function(event, data) {
+                event.preventDefault();
+                $("#crearSubCarpeta").hide();
+                $("#eliminarCarpeta").hide();
+                $("#gestionPermisosCarpeta").hide();
+                $("[data-carpeta]").hide();
+                $("#tablaDocumentosCarpeta").hide();
+                $("#eliminarArchivo").hide();
+                $("#cargarArchivo").hide();
+                $("#descargarArchivo").hide();
+                $("#gestionPermisosArchivo").hide();
+                $("#previsualizadorArchivo").hide();
+                carpetaSeleccionada = false;
+            });
+
+            $('#tablaDocumentosCarpeta').on('click', 'tbody tr', function(event) {
+                $(this).addClass('seleccionada').siblings().removeClass('seleccionada');
+                var urlEliminarArchivo = '{{ path("eliminarArchivo", {"idDocumento": "idDocumento"}) }}'; 
+                urlEliminarArchivo = urlEliminarArchivo.replace("idDocumento", idDocumento );
+
+                var urlDescargarArchivo = '{{ path("descargarArchivo", {"idDocumento" : "idDocumento"}) }}'; 
+                urlDescargarArchivo = urlDescargarArchivo.replace("idDocumento", idDocumento);
+
+                $("#eliminarArchivo").attr("href", urlEliminarArchivo);
+                $("#descargarArchivo").attr("href", urlDescargarArchivo);
+                {% if storages != null %}
+                    $("#eliminarArchivo").show();
+                    $("#descargarArchivo").show();
+                    $("#gestionPermisosArchivo").show();
+                    $("#previsualizadorArchivo").show();
+                    $("#cargarArchivo").hide();
+                {% endif %}
+            });
+
+            $('#tablaDocumentosCarpeta').on('click', 'tbody tr td', function(event) {
+                idDocumento = $(this).attr('id');
+                var urlPermisosArchivo = '{{ path("permisosArchivo", {"idDirectorio" : "idDirectorio", "idLibreria" : "idLibreria", "idArchivo" : "idArchivo"}) }}'; 
+                urlPermisosArchivo = urlPermisosArchivo.replace("idDirectorio", idDirectorioActual);
+                urlPermisosArchivo = urlPermisosArchivo.replace("idLibreria", {{libreria}});
+                urlPermisosArchivo = urlPermisosArchivo.replace("idArchivo", idDocumento);
+                $("#gestionPermisosArchivo").attr("href", urlPermisosArchivo);   
+
+                var urlPrevisualizadorArchivo = '{{ path("previsualizadorArchivos", {"idDocumento" : "idDocumento"}) }}'; 
+                urlPrevisualizadorArchivo = urlPrevisualizadorArchivo.replace("idDocumento", idDocumento);
+                $("#previsualizadorArchivo").attr("href", urlPrevisualizadorArchivo);
+
+            });
+
+            $(document).click(function(event) {
+                var $target = $(event.target);
+                if(!$target.closest('td').length) {
+                    $('#tablaDocumentosCarpeta tbody tr').removeClass('seleccionada');
+                    $("#eliminarArchivo").hide();
+                    $("#descargarArchivo").hide();
+                    $("#gestionPermisosArchivo").hide();
+                    $("#previsualizadorArchivo").hide();
+                    if(carpetaSeleccionada){
+                        $("#cargarArchivo").show();
+                    }
+                    idDocumento=null;
+                    nombreDocumento=null;
+                }        
+            });     
+        });
+    </script>
+{% endblock %}
+

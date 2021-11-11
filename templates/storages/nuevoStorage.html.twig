@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid centradoTexto">
+         <div class="row justify-content-center cajaFormularioStorages">
+            <div class="col col-md-12">
+                <h2 class="paddingTitulos">NUEVO STORAGE</h2>
+            </div>
+            <form>
+                <div class="row">
+                    <div class="col col-md-4">
+                        TIPO
+                    </div>
+                    <div class="col col-md-8">
+                        {# Select con tipos de storage (por el momento solo owncloud) #}
+                        <select id="inputTipoStorage" class="form-control">
+                            <option value="eligeUno" selected>Elige uno</option>
+                            <option value="owncloud">Owncloud</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4">
+                        STORAGE
+                    </div>
+                    <div class="col col-md-8">
+                        {# Input nombre del storage #}
+                        <input type="text" class="form-control" id="inputNombreStorage" placeholder="Nombre del Storage">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4">
+                        SERVIDOR
+                    </div>
+                    <div class="col col-md-8">
+                        {# Input nombre de servidor ¿?¿?¿ #}
+                        <input type="text" class="form-control" id="inputNombreServidor" placeholder="Nombre de servidor...">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4">
+                        USUARIO
+                    </div>
+                    <div class="col col-md-8">
+                        {# Input nombre de usuario #}
+                        <input type="text" class="form-control" id="inputNombreUsuario" placeholder="Nombre de usuario...">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4">
+                        CONTRASEÑA
+                    </div>
+                    <div class="col col-md-8">
+                        {# Input de la contraseña #}
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Contraseña...">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-12">
+                        <button id="botonSubmitNuevoStorage" class="btn botonesCreacion btn-primary">Crear</button>
+                    </div>
+                </div>
+            </form>
+         </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            var noError=null;
+            var tipoStorage;
+            var servidorStorage;
+            var usuario;
+            var password;
+            var libreria;
+            var nombreStorage;
+           
+            $("#botonSubmitNuevoStorage").click(function(event) {
+                event.preventDefault();
+                noError=true;
+                var url = '{{ path("crearStorage", {"tipoStorage": "tipoStorage", "servidorStorage" : "servidorStorage", "usuario" : "usuario", "password" : "password", "idLibreria" : "idLibreria", "nombreStorage" : "nombreStorage"}) }}'; 
+                var urlPrincipal = '{{ path("principal") }}'
+                tipoStorage = $("#inputTipoStorage option:selected").val();
+                servidorStorage = $("#inputNombreServidor").val();
+                usuario = $("#inputNombreUsuario").val();
+                password = $("#inputPassword").val();
+                nombreStorage = $("#inputNombreStorage").val();
+                libreria = {{idLibreria}};
+                if(tipoStorage==null){
+                    noError=false;
+                }
+                if(servidorStorage==null){
+                    noError=false;
+                }
+                if(usuario==null){
+                    noError=false;
+                }
+                if(password==null){
+                    noError=false;
+                }
+                if(nombreStorage==null){
+                    noError=false;
+                }
+                if(noError==true){
+                    url = url.replace("tipoStorage", tipoStorage);
+                    url = url.replace("servidorStorage", servidorStorage);
+                    url = url.replace("usuario", usuario);
+                    url = url.replace("password", password);
+                    url = url.replace("idLibreria", libreria);
+                    url = url.replace("nombreStorage", nombreStorage);
+                    $.ajax({
+                        url : url,
+                        data : { 
+                            'tipoStorage' : tipoStorage, 
+                            'servidorStorage' : servidorStorage, 
+                            'usuario' : usuario,
+                            'password' : password,
+                            'idLibreria' : libreria,
+                            'nombreStorage' : nombreStorage
+                        },
+                        type : 'POST',
+                        success : function() {
+                            window.location = urlPrincipal;
+                        },
+                        error : function() {}
+                    });
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

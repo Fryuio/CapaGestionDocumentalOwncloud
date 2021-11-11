@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {{parent()}}
+    <div class="row justify-content-center">
+        <div id="cajaLogin">
+            {{form_start(formulario)}}
+                <div class="row justify-content-center">
+                    <div class="col-md-12" id="cajaLoginEmail">
+                        {{ form_row(formulario.nombre) }}
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-12" id="cajaLoginPassword">
+                        {{ form_row(formulario.password) }}
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-12" id="cajaLoginSubmit">
+                        {{ form_row(formulario.enviar) }}
+                        {# <a href="#">¿No tienes cuenta? Regístrate aquí</a> #}
+                    </div>
+                </div>
+            {{form_end(formulario)}} 
+        </div>
+    </div>
+{% endblock %}

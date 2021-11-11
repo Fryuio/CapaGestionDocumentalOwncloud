@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% set usuario = app.session.get('usuario') %}
+        <div class="row justify-content-center">
+            <div id="cajaCargarArchivo">
+                <form id="formularioSubidaArchivos" enctype="multipart/form-data">
+                    <h1>Cargar archivo</h1>
+                    <div class="row cajaBotonVolver justify-content-center">
+                        <a class="botonVolver btn" href="{{ path('libreria', {'idLibreria' : libreria}) }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                    </div>
+                    <div class="row">
+                        <div class="col col-md-4">
+                            FICHERO 
+                        </div>
+                        <div class="col col-md-8">
+                            <input  type="file" id="archivo1" name="archivo1"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-md-4">
+                            ALMACENAR EN
+                        </div>
+                        <div class="col col-md-8">
+                            {# Select con los storages disponibles del usuario #}
+                            <select id="inputStorage" class="form-control">
+                                <option value="eligeUno" selected>Elige uno</option>
+                                {% for storage in storages %}
+                                    {% set metadatos = storage.metadata|json_decode %}
+                                    {% set nombreStorage = metadatos.nombreStorage %}
+                                    <option value="{{storage.id}}">{{nombreStorage}}</option>
+                                    {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-md-4">
+                            METADATOS 
+                        </div>
+                        <div class="col col-md-8">
+                            {# Tabla? metadatos #}
+                            <button id="botonAgregarFila" class="btn botonesCreacion btn-primary"><i class="fas fa-plus"></i> Agregar fila</button>
+
+                            <table class="table table-hover table-dark" id="tablaMetadatosDocumento">
+                                <thead>
+                                    <th colspan="1">Clave</th>
+                                    <th colspan="1">Valor</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td id="clave1" data-id="1">
+                                            <input type="text" class="form-control inputClave" id="inputClave1" placeholder="Clave">
+                                        </td>
+                                        <td id="valor1" data-id="1">
+                                            <input type="text" class="form-control inputValor" id="inputValor1" placeholder="Valor">
+                                        </td>
+                                    </tr>                
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <button id="botonSubmitCargarArchivo" class="btn botonesCreacion btn-primary">Crear</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script>
+        $(document).ready(function(){
+            var idClaveActual = 1;
+            var idValorActual = 1;
+            var idDirectorio;
+            var storageSeleccionado;
+            var fichero;
+            var noError = true;
+
+            $("#botonSubmitCargarArchivo").click(function(event) {
+                event.preventDefault();
+                noError=true;
+                var url = '{{ path("cargarArchivo", {"idDirectorio" : "idDirectorio", "idLibreria" : "idLibreria"}) }}';
+                var urlPrincipal = '{{ path("principal") }}';
+                var metadatos = [];
+                var clave, valor;
+                var formData = new FormData();
+                var idClaveAux = 1;
+                var idValorAux = 1;
+                formData.append('fichero', $('input[type=file]')[0].files[0]);
+                $("#tablaMetadatosDocumento tbody tr").each(function (index) {
+                    $(this).children("td").each(function (index2) {
+                        switch (index2) {
+                            case 0:
+                                clave = $(this).find(".inputClave").val();
+                                break;
+                            case 1:
+                                valor = $(this).find(".inputValor").val();
+                                break;
+                        }
+                    });
+                    metadatos.push({'clave' : valor, 'valor' : valor});
+                    idClaveAux++;
+                    idValorAux++;
+
+                });
+                formData.append('metadatos', JSON.stringify(metadatos));
+                storageSeleccionado = $("#inputStorage").val();
+                formData.append('storageSeleccionado', storageSeleccionado);
+                idDirectorio = {{idDirectorio}};
+                console.log(metadatos);
+                if(noError==true){
+                    url = url.replace("idDirectorio", idDirectorio);
+                    url = url.replace("idLibreria", {{libreria}});
+                    $.ajax({
+                        url : url,
+                        data : formData,
+                        type : 'POST',
+                        dataType: 'html',
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success : function() {
+                            window.location = urlPrincipal;  
+                        },
+                        error : function() {}
+                    });
+                } 
+            });
+
+            $("#botonAgregarFila").click(function(event) {
+                event.preventDefault();
+                idClaveActual++;
+                idValorActual++;
+                var nuevaFila = "<tr><td id='clave"+idClaveActual+"' data-id='"+idClaveActual+"'><input type='text' class='form-control inputClave' id='inputClave"+idClaveActual+"' placeholder='Clave'></td><td id='valor"+idValorActual+"' data-id='"+idValorActual+"'><input type='text' class='form-control inputValor' id='inpuValor"+idValorActual+"' placeholder='Valor'></td></tr>"
+                $("#tablaMetadatosDocumento>tbody").append(nuevaFila);
+
+            });
+
+        });
+
+    </script>
+
+{% endblock %}

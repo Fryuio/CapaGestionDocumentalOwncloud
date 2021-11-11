@@ -1,0 +1,31 @@
+.tituloNavegacionGAIA {
+    font-size: 20px;
+    text-align: center;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link, .dropdown-item:active{
+    background-color: #041E42 !important; 
+}
+
+.pills {
+    text-align: center;
+}
+
+.progress {
+    width: 50%;
+    margin-left: 25%;
+}
+
+.bienvenidaUsuario {
+    text-align: center;
+    font-size: 20px;
+}
+
+.centradoTextoHome {
+    text-align: center;
+}
+
+.espaciadoAlmacenamiento{
+    margin-top: 5px;
+}
+

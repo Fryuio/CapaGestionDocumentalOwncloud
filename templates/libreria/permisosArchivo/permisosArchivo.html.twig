@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% for mensaje in app.flashes('permisoYaOtorgado') %}
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="alert alert-danger fade show " role="alert">
+                        {{ mensaje }} <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% for mensaje in app.flashes('permisoOtorgadoExito') %}
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="alert alert-success fade show " role="alert">
+                        {{ mensaje }} <i class="fas fa-check"></i>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% for mensaje in app.flashes('permisoNoEliminado') %}
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="alert alert-danger fade show " role="alert">
+                        {{ mensaje }} <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% for mensaje in app.flashes('permisoEliminadoExito') %}
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="alert alert-success fade show " role="alert">
+                        {{ mensaje }} <i class="fas fa-check"></i>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="row cajaBotonVolver justify-content-center">
+        <a class="botonVolver btn" href="{{ path('libreria', {"idLibreria" : idLibreria}) }}"><i class="fas fa-arrow-left"></i> Volver a la librería</a>
+    </div>
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col col-md-12 centradoTexto">
+                <div id="informacionCarpeta">
+                        <h2 class="paddingTitulos">Archivo: {{metadatos.0.document.name}} 
+                        <a class="botonVersionado btn" href="{{ path('versionadoArchivos', {"idLibreria": idLibreria, "idDocumento" : idArchivo}) }}"><i class="fas fa-arrow-right"></i> Ver versiones</a>
+                        </h2>
+                        <h3 class="paddingTitulos">Información adicional del archivo</h3>
+                        {% for metadato in metadatos %}
+                            {% if metadato.clave == "fechaCreacion" %}
+                                <p>Fecha de creación: {{metadato.valor|date("H:i:s d/m/Y")}}</p>
+                            {% elseif metadato.clave == "peso" %}
+                                <p>{{metadato.clave}} : {{metadato.valor}} bytes</p>
+                            {% endif %}
+                        {% endfor %}
+                        {% if metadatos == null %}
+                            <p>Sin datos que mostrar</p>
+                        {% endif %}
+                </div>
+
+            </div>
+
+            <div class="col col-md-12 centradoTexto">
+                <div class="cajaBusqueda">
+                    <h3 class="paddingTitulos">Búsqueda de usuario</h3>
+                    <div class="input-group">
+                        <input id="cajaNombreUsuario" type="text" class="form-control" placeholder="Nombre de usuario...">
+                    </div>
+                </div>
+            </div>
+            <div class="col col-md-12 centradoTexto">
+                <h2 class="paddingTitulos">Resultado de la búsqueda</h2>
+                <div id="tablaUsuarios" class="col align-self-center col-md-6">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            actualizaTabla(null, {{idDirectorio}}, {{idArchivo}});
+            var idSelect = null;
+            var permisoSeleccionado = null;
+            var botonAgregarPermiso = null;
+            var botonQuitarPermiso = null;
+            $("#cajaNombreUsuario").on('keyup', function(){
+                var nombreUsuario = $(this).val();
+                if(nombreUsuario != ""){
+                    actualizaTabla(nombreUsuario, {{idDirectorio}}, {{idArchivo}});
+                }else {
+                    actualizaTabla(null, {{idDirectorio}}, {{idArchivo}});
+                }
+            });
+   
+            $('#tablaUsuarios').on('change', '.selectPermisos', function() {
+                idSelect = $(this).attr('id');
+                permisoSeleccionado = $(this).val();
+                botonAgregarPermiso = '#agregarPermiso'+idSelect;
+                botonQuitarPermiso = '#quitarPermiso'+idSelect;
+            });
+
+            $('#tablaUsuarios').on('click', botonAgregarPermiso, function() {
+                var urlAgregarPermiso = '{{ path("agregarPermisoArchivo", {"idUsuario": "idUsuario", "idDirectorio" : "idDirectorio", "idArchivo" : "idArchivo", "permisoSeleccionado" : "permisoSeleccionado"}) }}'; 
+                urlAgregarPermiso = urlAgregarPermiso.replace("idUsuario", idSelect);
+                urlAgregarPermiso = urlAgregarPermiso.replace("idDirectorio", {{idDirectorio}});
+                urlAgregarPermiso = urlAgregarPermiso.replace("permisoSeleccionado", permisoSeleccionado);
+                urlAgregarPermiso = urlAgregarPermiso.replace("idArchivo", {{idArchivo}});
+                $(botonAgregarPermiso).attr('href', urlAgregarPermiso);
+            });
+
+            $('#tablaUsuarios').on('click', botonQuitarPermiso, function() {
+                var urlQuitarPermiso = '{{ path("quitarPermisoArchivo", {"idUsuario": "idUsuario", "idDirectorio" : "idDirectorio", "idArchivo" : "idArchivo", "permisoSeleccionado" : "permisoSeleccionado"}) }}'; 
+                urlQuitarPermiso = urlQuitarPermiso.replace("idUsuario", idSelect);
+                urlQuitarPermiso = urlQuitarPermiso.replace("idDirectorio", {{idDirectorio}});
+                urlQuitarPermiso = urlQuitarPermiso.replace("permisoSeleccionado", permisoSeleccionado);
+                urlQuitarPermiso = urlQuitarPermiso.replace("idArchivo", {{idArchivo}});
+                $(botonQuitarPermiso).attr('href', urlQuitarPermiso);
+            });
+
+            setTimeout(function() {
+                $(".alert").alert('close');
+            },5000);
+
+            
+            
+        });
+
+        function actualizaTabla(nombreUsuario, idDirectorio, idArchivo) {
+            var url = '{{ path("tablaPermisosUsuarioArchivo", {"nombreUsuario": "nombreUsuario", "idDirectorio" : "idDirectorio", "idArchivo" : "idArchivo"}) }}'; 
+            url = url.replace("nombreUsuario", nombreUsuario);
+            url = url.replace("idDirectorio", idDirectorio);
+            url = url.replace("idArchivo", idArchivo);
+            $.ajax({
+                url : url,
+                data : { 'nombreUsuario' : nombreUsuario, 'idDirectorio' : idDirectorio, 'idArchivo' : idArchivo },
+                type : 'POST',
+                dataType : 'html',
+                success : function(respuesta) {
+                    $('#tablaUsuarios').html(respuesta);
+                },
+                error : function() {}
+            });
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {# Run `composer require symfony/webpack-encore-bundle`
+           and uncomment the following Encore helpers to start using Symfony UX #}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <link rel="stylesheet" href="{{asset('css/estilosHome.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosBarraNavegacionBase.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosFormularioLogin.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosErrores.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosMisDocumentos.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosLogin.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosPrincipal.css')}}"> 
+            <link rel="stylesheet" href="{{asset('css/estilosFormularioCrearLibrerias.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosGenerales.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosLibreria.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosFormularioCrearCarpeta.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosPermisosCarpeta.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosFormularioStorage.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosCargarArchivo.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosPermisosArchivo.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosVersionado.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosPrevisualizadorArchivos.css')}}">
+            <link rel="stylesheet" href="{{asset('css/estilosBusquedaAvanzada.css')}}">
+        {% endblock %}
+
+        {% block javascripts %}
+            <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            <script src="https://kit.fontawesome.com/c71f60aa6b.js" crossorigin="anonymous"></script>
+        {% endblock %}
+        
+    </head>
+    <body>
+        {% block body %}
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand mx-auto" href="{{ path('home') }}"><i class="fab fa-galactic-senate"></i> GAIA <i class="fab fa-galactic-senate"></i></a>
+            </nav>
+            {% if app.session.get('usuario') != null %}
+                <nav class="navbar navbar-expand-lg navbar-dark" id="barraNavegacionPrincipal">
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user"></i> {{ app.session.get('usuario').nombre }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi perfil</a>
+                                    <a class="dropdown-item" href="{{ path('misDocumentos') }}"><i class="fas fa-file"></i> Mis Documentos</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-users"></i> Mis Grupos</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-database"></i> Mi capacidad</a>
+                                    <a class="dropdown-item" href="{{ path('cerrarSesion') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                                </div>
+                            </li> 
+                        </ul> 
+                    </div>
+                </nav>
+            {% endif %}
+        {% endblock %}
+    </body>
+</html>

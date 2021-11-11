@@ -1,0 +1,13 @@
+.cajaFormularioStorages {
+    border: solid 2px black;
+    margin-top: 20px;
+    width: 50%;
+    margin-left: 25%;
+}
+.row {
+    margin-top: 20px;
+}
+
+#botonSubmitNuevoStorage {
+    margin-bottom: 20px;
+}

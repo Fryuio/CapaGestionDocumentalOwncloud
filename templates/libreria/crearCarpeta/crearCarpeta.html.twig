@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% set usuario = app.session.get('usuario') %}
+        <div class="row justify-content-center">
+            <div id="cajaCrearCarpetas">
+            <h1>Crear nueva carpeta</h1>
+                <div class="row cajaBotonVolver justify-content-center">
+                    <a class="botonVolver btn" href="{{ path('libreria', {'idLibreria' : libreria}) }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                </div>
+                {{form_start(formulario)}}
+                    <div class="row justify-content-center">
+                        <div class="col-md-12" id="cajaNombreCarpeta">
+                            {{ form_row(formulario.name) }}
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-12" id="cajaCrearCarpetaSubmit">
+                            {{ form_row(formulario.crear) }}
+                        </div>
+                    </div>
+                {{form_end(formulario)}}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script>
+        
+
+    </script>
+
+{% endblock %}
+

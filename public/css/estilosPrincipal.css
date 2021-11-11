@@ -1,0 +1,38 @@
+#bordeTablaLibreriasUsuario {
+    margin-top: 20px;
+    width: 20%;
+}
+
+#tituloTablaLibreriasUsuario {
+    text-align: center;
+}
+
+#tablaLibreriasUsuario td {
+    text-align: center;
+}
+#gestionLibrerias {
+     text-align: center;
+     margin-top: 20px;
+}
+
+#crearLibreria {
+    background-color: green;
+    color: white;
+}
+
+.eliminarLibreria {
+    background-color: red;
+    color: white;
+}
+.eliminarLibreria:hover {
+    background-color: red;
+    color: white;
+}
+
+.seleccionada {
+    background-color: #041E42;
+}
+
+#tdOculto {
+    visibility: hidden;
+}

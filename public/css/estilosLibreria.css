@@ -1,0 +1,41 @@
+.cajaArbol {
+    border: solid 2px black;
+    text-align: center;
+    margin-right: 100px;
+}
+
+.cajaListado {
+    border: solid 2px black;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.cajaPanel {
+    border: solid 2px black;
+    text-align: center;
+}
+
+.cajaPrincipal {
+    margin-top: 30px;
+}
+
+.btn-toolbar {
+    display: inline;
+    text-align: center;
+    box-shadow: none !important;
+}
+
+#tablaCarpetasUsuario {
+    margin-right: 20px;
+}
+
+#crearSubCarpeta, #eliminarCarpeta, #gestionPermisosCarpeta {
+    display: none;
+}
+
+.seleccionada {
+    background-color: #041E42;
+}
+
+#tablaDocumentosCarpeta {
+    margin-top: 20px;
+}

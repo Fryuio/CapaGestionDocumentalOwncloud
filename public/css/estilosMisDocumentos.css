@@ -1,0 +1,10 @@
+#cajaTituloMisDocumentos{
+    margin-top: 10px;
+    text-align: center;
+}
+
+.centradoTextoMisDocumentos {
+    border-bottom: solid;
+    display: inline;
+    padding: 5px;
+}

@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+    {% block title %} Home {% endblock %}
+{% block body %}
+    {{ parent() }}
+    {% if app.session.get('usuario') == null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="errorNoLogeado">
+                    <p>Error, esta sección no es accesible sin haber iniciado sesión</p>
+                    <p><a href="{{ path('login') }}">Volver a login</a></p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="row cajaBotonVolver justify-content-center">
+        <a class="botonVolver btn" href="{{ path('libreria', {"idLibreria" : libreria.id}) }}"><i class="fas fa-arrow-left"></i> Volver a la librería</a>
+    </div>
+    {% set usuario = app.session.get('usuario') %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col col-md-12 centradoTexto">
+               <h2 class="paddingTitulos">Búsqueda avanzada de archivos y carpetas de la librería: {{libreria.name}}</h2>
+            </div>
+            <div class="row cajaBusquedaAvanzada">
+                <div class="col col-md-6 centradoTexto">
+                    <h3 class="paddingTitulos">Buscar por nombre de carpeta</h3>
+                    <div class="input-group">
+                        <input id="cajaNombreCarpeta" type="text" class="form-control" placeholder="Nombre de la carpeta...">
+                    </div>
+                </div>
+                <div class="col col-md-6 centradoTexto">
+                    <h3 class="paddingTitulos">Buscar por metadatos de la carpeta</h3>
+                    <div class="input-group">
+                        <input id="cajaMetadatosCarpeta" type="text" class="form-control" placeholder="Metadatos...">
+                    </div>
+                </div>
+                <div class="col col-md-6 centradoTexto">
+                    <h3 class="paddingTitulos">Buscar por nombre de archivo</h3>
+                    <div class="input-group">
+                        <input id="cajaNombreArchivo" type="text" class="form-control" placeholder="Nombre del archivo...">
+                    </div>
+                </div>
+                <div class="col col-md-6 centradoTexto">
+                    <h3 class="paddingTitulos">Buscar por metadatos del archivo</h3>
+                    <div class="input-group">
+                        <input id="cajaMetadatosArchivo" type="text" class="form-control" placeholder="Metadatos...">
+                    </div>
+                </div>
+                <div class="col col-md-12 centradoTexto">
+                    <h3 class="paddingTitulos">Buscar por autor</h3>
+                    <div class="input-group">
+                        <input id="cajaNombreAutor" type="text" class="form-control" placeholder="Nombre del autor...">
+                    </div>
+                </div>
+            </div>
+            <div class="col col-md-12 centradoTexto">
+                <h2 class="paddingTitulos">Resultado de la búsqueda</h2>
+                <div id="tablaResultadoBusqueda" class="col align-self-center col-md-6">
+            
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            
+            var idSelect = null;
+            var permisoSeleccionado = null;
+            var botonAgregarPermiso = null;
+            var botonQuitarPermiso = null;
+            var nombreCarpeta = null;
+            var nombreArchivo = null;
+            var nombreAutor = null;
+            var metadatosCarpeta = null;
+            var metadatosArchivo = null;
+            var arrayBusqueda = {
+                'nombreCarpeta' : nombreCarpeta,
+                'nombreArchivo' : nombreArchivo,
+                'nombreAutor' : nombreAutor,
+                'metadatosCarpeta' : metadatosCarpeta,
+                'metadatosArchivo' : metadatosArchivo
+            };
+            actualizaTablaBusquedaAvanzada(null);
+            $("#cajaNombreCarpeta").on('keyup', function(){
+                var nombreCarpeta = $(this).val();
+                arrayBusqueda['nombreCarpeta'] = nombreCarpeta;
+                actualizaTablaBusquedaAvanzada(arrayBusqueda);
+                
+            });
+            $("#cajaNombreArchivo").on('keyup', function(){
+                var nombreArchivo = $(this).val();
+                arrayBusqueda['nombreArchivo'] = nombreArchivo;
+                actualizaTablaBusquedaAvanzada(arrayBusqueda);
+            });
+            $("#cajaNombreAutor").on('keyup', function(){
+                var nombreAutor = $(this).val();
+                arrayBusqueda['nombreAutor'] = nombreAutor;
+                actualizaTablaBusquedaAvanzada(arrayBusqueda);
+            });
+            $("#cajaMetadatosCarpeta").on('keyup', function(){
+                var metametadatosCarpetadatos = $(this).val();
+                arrayBusqueda['metadatosCarpeta'] = metadatosCarpeta;
+                actualizaTablaBusquedaAvanzada(arrayBusqueda);
+            });
+            $("#cajaMetadatosArchivo").on('keyup', function(){
+                var metadatosArchivo = $(this).val();
+                arrayBusqueda['metadatosArchivo'] = metadatosArchivo;
+                actualizaTablaBusquedaAvanzada(arrayBusqueda);
+            });
+
+            setTimeout(function() {
+                $(".alert").alert('close');
+            },5000); 
+
+            
+            
+        });
+
+        function actualizaTablaBusquedaAvanzada(arrayBusqueda) {
+            var url = '{{ path("tablaBusquedaAvanzada", {"idLibreria" : "idLibreria"}) }}'; 
+            url = url.replace("idLibreria", {{ libreria.id }} );
+            $.ajax({
+                url : url,
+                data : { 'filtrosBusqueda' : arrayBusqueda },
+                type : 'POST',
+                dataType : 'html',
+                success : function(respuesta) {
+                    $('#tablaResultadoBusqueda').html(respuesta);
+                },
+                error : function() {}
+            });
+        } 
+    </script>
+
+{% endblock %}
